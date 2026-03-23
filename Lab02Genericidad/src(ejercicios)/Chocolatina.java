@@ -1,0 +1,27 @@
+package Lab02Genericidad.src;
+
+public class Chocolatina {
+    private String marca;
+
+    public Chocolatina(String marca) {
+        this.marca = marca;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    @Override
+    public String toString() {
+        return marca;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Chocolatina)) return false;
+
+        Chocolatina c = (Chocolatina) obj;
+        return this.marca.equals(c.marca);
+    }
+}
