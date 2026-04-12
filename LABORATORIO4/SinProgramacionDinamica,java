@@ -1,0 +1,25 @@
+package LABORATORIO4;
+
+public class SinProgramacionDinamica {
+
+    // Función recursiva
+    public static int getValue(int[] values, int n) {
+        if (n <= 0)
+            return 0;
+
+        int max = Integer.MIN_VALUE;
+
+        for (int i = 0; i < n; i++) {
+            max = Math.max(max, values[i] + getValue(values, n - i - 1));
+        }
+
+        return max;
+    }
+
+    public static void main(String[] args) {
+        int[] values = {3, 7, 1, 3, 9};
+        int rodLength = values.length;
+
+        System.out.println("Valor máximo" + getValue(values, rodLength));
+    }
+}
