@@ -1,0 +1,83 @@
+import java.util.Arrays;
+public class TablaHashRehashing {
+
+    private int[] tabla;
+    private int M; // Tamaño de la tabla
+    private int n; // Elementos guardados
+    private final double LIMITE_ALFA = 0.75;
+
+    public TablaHashRehashing(int tamanoInicial) {
+        this.M = tamanoInicial;
+        this.tabla = new int[M];
+        Arrays.fill(tabla, -1); // -1 significa vacío
+        this.n = 0;
+    }
+
+    public void insertar(int clave) {
+        // Calcular el factor de carga si metiéramos este elemento
+        double alfaPotencial = (double) (n + 1) / M;
+
+        if (alfaPotencial > LIMITE_ALFA) {
+            System.out.printf("\n[ALERTA] Alfa futuro (%.2f) supera el límite (0.75). Iniciando Rehashing...%n", alfaPotencial);
+            realizarRehashing();
+        }
+        // Proceder con la inserción usando sondeo lineal
+        int hashBase = clave % M;
+        int i = 0;
+        int posicion = hashBase;
+
+        while (tabla[posicion] != -1) {
+            i++;
+            posicion = (hashBase + i) % M;
+        }
+        tabla[posicion] = clave;
+        n++;
+        double alfaActual = (double) n / M;
+        System.out.printf("Insertado %2d en índice %2d | Elementos (n): %d | Alfa (α): %.2f%n", clave, posicion, n, alfaActual);
+    }
+
+    private void realizarRehashing() {
+        int[] tablaVieja = this.tabla;
+        int tamanoViejo = this.M;
+
+        // Cambiar al siguiente tamaño primo sugerido
+        this.M = 17;
+        this.tabla = new int[M];
+        Arrays.fill(tabla, -1);
+        this.n = 0; // Reiniciar para volver a contar al reinsertar
+
+        System.out.println(" REHASHING: Creciendo tabla de " + tamanoViejo + " a " + M + " ");
+
+        // Reinsertar elementos viejos en la nueva estructura
+        for (int valor : tablaVieja) {
+            if (valor != -1) {
+                insertar(valor);
+            }
+        }
+        System.out.println(" REHASHING FINALIZADO Y TABLA REESTRUCTURADA \n");
+    }
+    public void mostrarTabla() {
+        System.out.println("Índice\tValor");
+        for (int i = 0; i < M; i++) {
+            System.out.println(i + "\t" + (tabla[i] == -1 ? "[Vacío]" : tabla[i]));
+        }
+    }
+    public static void main(String[] args) {
+        TablaHashRehashing hash = new TablaHashRehashing(7);
+
+        System.out.println(" INICIANDO INSERCIONES ");
+        hash.insertar(2);
+        hash.insertar(9);
+        hash.insertar(16);
+        hash.insertar(23);
+        hash.insertar(4);
+        
+        System.out.println("\n ESTADO DE LA TABLA ANTES DEL REHASHING ");
+        hash.mostrarTabla();
+        // Esta inserción detonará el cambio de tamaño antes de acomodarse
+        hash.insertar(11);
+
+        System.out.println(" ESTADO DE LA TABLA FINAL ");
+        hash.mostrarTabla();
+    }
+}
